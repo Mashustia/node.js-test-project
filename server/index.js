@@ -9,14 +9,28 @@ passport.use(
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback'
-    }, (accessToken) => {
-        console.log(accessToken)
+    }, (accessToken, refreshToken, profile) => {
+        console.log(accessToken, 'accessToken')
+        console.log(refreshToken, 'refreshToken')
+        console.log(profile, 'profile')
     })
 );
 
-app.get('/', (req, res) => {
-    res.send({ hi: 'there' });
-})
+app.get(
+    '/auth/google',
+    passport.authenticate(
+    'google',
+    {
+        scope: ['profile', 'email']
+    })
+)
+
+app.get(
+    '/auth/google/callback',
+    passport.authenticate(
+        'google',
+    )
+)
 
 // gets port env variable from heroku every time the app starts
 const PORT = process.env.PORT || 4000;
